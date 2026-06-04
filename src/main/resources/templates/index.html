@@ -1,0 +1,691 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SmartStay — Modern Hotel & Restaurant Management</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/shared.css" />
+  <style>
+    /* Landing page specific styles */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+
+    .hero-bg::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 20% 50%, rgba(26, 42, 108, 0.4) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 20%, rgba(201, 162, 39, 0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at 60% 80%, rgba(26, 42, 108, 0.2) 0%, transparent 50%);
+    }
+
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(201, 162, 39, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(201, 162, 39, 0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      animation: gridMove 20s linear infinite;
+    }
+
+    @keyframes gridMove {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(60px, 60px); }
+    }
+
+    .hero-shapes {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    .hero-shapes .shape {
+      position: absolute;
+      border: 1px solid rgba(201, 162, 39, 0.1);
+      animation: float 8s ease-in-out infinite;
+    }
+
+    .hero-shapes .shape:nth-child(1) {
+      width: 300px; height: 300px;
+      top: 10%; left: 5%;
+      border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+      animation-delay: 0s;
+    }
+
+    .hero-shapes .shape:nth-child(2) {
+      width: 200px; height: 200px;
+      top: 60%; right: 10%;
+      border-radius: 50%;
+      animation-delay: -2s;
+    }
+
+    .hero-shapes .shape:nth-child(3) {
+      width: 150px; height: 150px;
+      bottom: 20%; left: 20%;
+      transform: rotate(45deg);
+      animation-delay: -4s;
+    }
+
+    .hero-shapes .shape:nth-child(4) {
+      width: 100px; height: 100px;
+      top: 30%; right: 25%;
+      border-radius: 50%;
+      border-color: rgba(26, 42, 108, 0.2);
+      animation-delay: -6s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(5deg); }
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: var(--space-3xl) var(--space-lg);
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: 8px 20px;
+      background: rgba(201, 162, 39, 0.1);
+      border: 1px solid rgba(201, 162, 39, 0.2);
+      border-radius: var(--radius-full);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--gold);
+      margin-bottom: var(--space-xl);
+    }
+
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 700;
+      line-height: 1.1;
+      margin-bottom: var(--space-lg);
+    }
+
+    .hero h1 span { color: var(--gold); }
+
+    .hero p {
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      color: var(--fg-secondary);
+      max-width: 600px;
+      margin: 0 auto var(--space-xl);
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: var(--space-md);
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* Stats section */
+    .stats-section {
+      padding: var(--space-3xl) 0;
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .stat-item {
+      text-align: center;
+      padding: var(--space-lg);
+    }
+
+    .stat-item .stat-number {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700;
+      color: var(--gold);
+      font-family: var(--font-mono);
+      line-height: 1;
+      margin-bottom: var(--space-sm);
+    }
+
+    .stat-item .stat-desc {
+      font-size: 0.9375rem;
+      color: var(--fg-secondary);
+    }
+
+    /* Features section */
+    .features-section {
+      padding: var(--space-3xl) 0;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: var(--space-3xl);
+    }
+
+    .section-header .overline {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--gold);
+      margin-bottom: var(--space-sm);
+    }
+
+    .section-header h2 {
+      font-family: var(--font-display);
+      margin-bottom: var(--space-md);
+    }
+
+    .section-header p {
+      color: var(--fg-secondary);
+      max-width: 560px;
+      margin: 0 auto;
+    }
+
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-xl);
+      height: 100%;
+      transition: all var(--transition-base);
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-gold);
+      border-color: var(--gold);
+    }
+
+    .feature-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, rgba(26, 42, 108, 0.5), rgba(26, 42, 108, 0.3));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: var(--space-lg);
+      font-size: 1.5rem;
+    }
+
+    .feature-card h4 {
+      font-size: 1.125rem;
+      margin-bottom: var(--space-sm);
+    }
+
+    .feature-card p {
+      color: var(--fg-secondary);
+      font-size: 0.9375rem;
+      margin: 0;
+    }
+
+    /* Testimonials */
+    .testimonials-section {
+      padding: var(--space-3xl) 0;
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .testimonial-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-xl);
+      height: 100%;
+    }
+
+    .testimonial-card .stars {
+      color: var(--gold);
+      margin-bottom: var(--space-md);
+      font-size: 1.125rem;
+    }
+
+    .testimonial-card blockquote {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--fg);
+      margin-bottom: var(--space-lg);
+      font-style: italic;
+    }
+
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+    }
+
+    .testimonial-author .avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--navy);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      color: var(--gold);
+    }
+
+    .testimonial-author .name { font-weight: 600; font-size: 0.9375rem; }
+    .testimonial-author .role { font-size: 0.8125rem; color: var(--fg-muted); }
+
+    /* CTA section */
+    .cta-section {
+      padding: var(--space-3xl) 0;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center, rgba(26, 42, 108, 0.3) 0%, transparent 70%);
+    }
+
+    .cta-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .cta-section h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.75rem, 4vw, 2.5rem);
+      margin-bottom: var(--space-md);
+    }
+
+    .cta-section p {
+      color: var(--fg-secondary);
+      margin-bottom: var(--space-xl);
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Footer */
+    .site-footer {
+      padding: var(--space-xl) 0;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      color: var(--fg-muted);
+      font-size: 0.8125rem;
+    }
+
+    /* Navbar */
+    .landing-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: var(--space-md) var(--space-lg);
+      background: rgba(13, 17, 23, 0.8);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(48, 54, 61, 0.5);
+      transition: all var(--transition-base);
+    }
+
+    .landing-nav.scrolled {
+      padding: var(--space-sm) var(--space-lg);
+      background: rgba(13, 17, 23, 0.95);
+    }
+
+    .landing-nav-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .landing-nav .brand {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      font-weight: 700;
+      font-size: 1.25rem;
+      color: var(--fg);
+    }
+
+    .landing-nav .brand span { color: var(--gold); }
+
+    .landing-nav .nav-links {
+      display: flex;
+      gap: var(--space-lg);
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .landing-nav .nav-links a {
+      color: var(--fg-secondary);
+      font-size: 0.9375rem;
+      font-weight: 500;
+      transition: color var(--transition-fast);
+    }
+
+    .landing-nav .nav-links a:hover { color: var(--gold); }
+
+    @media (max-width: 768px) {
+      .landing-nav .nav-links { display: none; }
+      .hero h1 { font-size: 2rem; }
+      .stat-item { padding: var(--space-md); }
+      .stat-item .stat-number { font-size: 1.75rem; }
+    }
+
+    /* Light mode overrides for landing page */
+    [data-theme="light"] .landing-nav {
+      background: rgba(255, 255, 255, 0.85);
+      border-bottom-color: var(--border);
+    }
+    [data-theme="light"] .landing-nav.scrolled {
+      background: rgba(255, 255, 255, 0.95);
+    }
+    [data-theme="light"] .landing-nav .nav-links a {
+      color: var(--fg);
+    }
+    [data-theme="light"] .landing-nav .nav-links a:hover {
+      color: var(--gold);
+    }
+    [data-theme="light"] .hero-bg::before {
+      background:
+        radial-gradient(ellipse at 20% 50%, rgba(26, 42, 108, 0.06) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 20%, rgba(201, 162, 39, 0.08) 0%, transparent 50%),
+        radial-gradient(ellipse at 60% 80%, rgba(26, 42, 108, 0.04) 0%, transparent 50%);
+    }
+    [data-theme="light"] .hero-grid {
+      background-image:
+        linear-gradient(rgba(26, 42, 108, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(26, 42, 108, 0.04) 1px, transparent 1px);
+    }
+    [data-theme="light"] .hero-shapes .shape {
+      border-color: rgba(26, 42, 108, 0.08);
+    }
+    [data-theme="light"] .hero-shapes .shape:nth-child(4) {
+      border-color: rgba(26, 42, 108, 0.12);
+    }
+    [data-theme="light"] .hero h1 {
+      color: var(--fg);
+    }
+    [data-theme="light"] .hero p {
+      color: var(--fg-secondary);
+    }
+    [data-theme="light"] .hero-badge {
+      background: rgba(201, 162, 39, 0.08);
+      border-color: rgba(201, 162, 39, 0.15);
+      color: var(--gold-dark);
+    }
+    [data-theme="light"] .cta-section::before {
+      background: radial-gradient(ellipse at center, rgba(26, 42, 108, 0.06) 0%, transparent 70%);
+    }
+    [data-theme="light"] .cta-section h2 {
+      color: var(--fg);
+    }
+    [data-theme="light"] .section-header h2 {
+      color: var(--fg);
+    }
+    [data-theme="light"] .feature-card h4 {
+      color: var(--fg);
+    }
+    [data-theme="light"] .feature-icon {
+      background: linear-gradient(135deg, rgba(26, 42, 108, 0.1), rgba(26, 42, 108, 0.05));
+    }
+    [data-theme="light"] .testimonial-card blockquote {
+      color: var(--fg);
+    }
+    [data-theme="light"] .testimonial-author .avatar {
+      background: var(--navy);
+      color: #fff;
+    }
+    [data-theme="light"] .stat-item .stat-desc {
+      color: var(--fg-secondary);
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="landing-nav" id="landingNav">
+    <div class="landing-nav-inner">
+      <a th:href="@{/}" class="brand">Smart<span>Stay</span></a>
+      <ul class="nav-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#testimonials">Testimonials</a></li>
+        <li><a th:href="@{/login}" class="btn btn-primary btn-sm">Sign In</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <button class="theme-toggle" aria-label="Toggle theme" style="position:absolute;top:var(--space-lg);right:var(--space-lg);z-index:10">
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+    </button>
+    <div class="hero-bg">
+      <div class="hero-grid"></div>
+      <div class="hero-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+      </div>
+    </div>
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-badge fade-up">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          Trusted by 500+ hotels worldwide
+        </div>
+        <h1 class="fade-up" style="animation-delay:0.1s">Modern Hotel &<br><span>Restaurant Management</span></h1>
+        <p class="fade-up" style="animation-delay:0.2s">One platform to manage rooms, bookings, restaurant orders, billing, and guest experience — from check-in to checkout.</p>
+        <div class="hero-actions fade-up" style="animation-delay:0.3s">
+          <a th:href="@{/login}" class="btn btn-primary btn-lg">Get Started Free</a>
+          <a href="#features" class="btn btn-ghost btn-lg">See Features</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats -->
+  <section class="stats-section">
+    <div class="container">
+      <div class="row">
+        <div class="col-6 col-md-3">
+          <div class="stat-item fade-up">
+            <div class="stat-number count-up" data-target="500" data-suffix="+">0</div>
+            <div class="stat-desc">Hotels Managed</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="stat-item fade-up" style="animation-delay:0.1s">
+            <div class="stat-number count-up" data-target="98" data-suffix="%">0</div>
+            <div class="stat-desc">Guest Satisfaction</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="stat-item fade-up" style="animation-delay:0.2s">
+            <div class="stat-number count-up" data-target="50" data-suffix="K">0</div>
+            <div class="stat-desc">Bookings / Month</div>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="stat-item fade-up" style="animation-delay:0.3s">
+            <div class="stat-number">24/7</div>
+            <div class="stat-desc">Support Available</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="features-section" id="features">
+    <div class="container">
+      <div class="section-header">
+        <div class="overline fade-up">Features</div>
+        <h2 class="fade-up" style="animation-delay:0.1s">Everything you need to run your hotel</h2>
+        <p class="fade-up" style="animation-delay:0.2s">From front desk to kitchen, SmartStay covers every operation in one unified platform.</p>
+      </div>
+      <div class="row g-4">
+        <div class="col-md-6 col-lg-4">
+          <div class="feature-card fade-up">
+            <div class="feature-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 10h20"/></svg>
+            </div>
+            <h4>Room Management</h4>
+            <p>Real-time room status tracking, housekeeping schedules, and maintenance alerts all in one view.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="feature-card fade-up" style="animation-delay:0.1s">
+            <div class="feature-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+            </div>
+            <h4>Booking Engine</h4>
+            <p>Manage reservations, check-ins, and check-outs with automated confirmations and guest communication.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="feature-card fade-up" style="animation-delay:0.2s">
+            <div class="feature-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M18 8h1a4 4 0 010 8h-1M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><path d="M6 1v3M10 1v3M14 1v3"/></svg>
+            </div>
+            <h4>Restaurant Orders</h4>
+            <p>Kanban-style order management from kitchen to room service with real-time status tracking.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="feature-card fade-up" style="animation-delay:0.3s">
+            <div class="feature-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+            </div>
+            <h4>Billing & Invoicing</h4>
+            <p>Automated GST-compliant invoices with room charges, food orders, and payment tracking.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="feature-card fade-up" style="animation-delay:0.4s">
+            <div class="feature-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+            </div>
+            <h4>AI Insights</h4>
+            <p>Ask questions about occupancy trends, revenue forecasts, and guest preferences in natural language.</p>
+          </div>
+        </div>
+        <div class="col-md-6 col-lg-4">
+          <div class="feature-card fade-up" style="animation-delay:0.5s">
+            <div class="feature-icon">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg>
+            </div>
+            <h4>Guest Portal</h4>
+            <p>QR-code access for guests to order food, view bills, request housekeeping, and provide feedback.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="testimonials-section" id="testimonials">
+    <div class="container">
+      <div class="section-header">
+        <div class="overline fade-up">Testimonials</div>
+        <h2 class="fade-up" style="animation-delay:0.1s">Loved by hotel operators</h2>
+      </div>
+      <div class="row g-4">
+        <div class="col-md-4">
+          <div class="testimonial-card fade-up">
+            <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+            <blockquote>"SmartStay cut our check-in time by 60%. The guest portal alone was worth the investment."</blockquote>
+            <div class="testimonial-author">
+              <div class="avatar">RK</div>
+              <div>
+                <div class="name">Rajesh Kumar</div>
+                <div class="role">GM, The Grand Palace Hotel</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="testimonial-card fade-up" style="animation-delay:0.1s">
+            <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+            <blockquote>"The restaurant order system transformed our room service. Kitchen errors dropped to near zero."</blockquote>
+            <div class="testimonial-author">
+              <div class="avatar">SP</div>
+              <div>
+                <div class="name">Sarah Patel</div>
+                <div class="role">Owner, Boutique Stays</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="testimonial-card fade-up" style="animation-delay:0.2s">
+            <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+            <blockquote>"AI insights helped us identify that we were overpricing deluxe rooms on weekends. Revenue jumped 18%."</blockquote>
+            <div class="testimonial-author">
+              <div class="avatar">AM</div>
+              <div>
+                <div class="name">Arun Mehta</div>
+                <div class="role">Director, Heritage Hotels Group</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="container">
+      <div class="cta-content">
+        <h2 class="fade-up">Ready to transform your hotel operations?</h2>
+        <p class="fade-up" style="animation-delay:0.1s">Start free. No credit card required. Setup in under 10 minutes.</p>
+        <div class="fade-up" style="animation-delay:0.2s">
+          <a th:href="@{/login}" class="btn btn-primary btn-lg">Start Free Trial</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <p>&copy; 2026 SmartStay. All rights reserved. Built for modern hospitality.</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/shared.js"></script>
+  <script>
+    // Navbar scroll effect
+    window.addEventListener('scroll', function() {
+      var nav = document.getElementById('landingNav');
+      if (nav) {
+        nav.classList.toggle('scrolled', window.scrollY > 50);
+      }
+    });
+  </script>
+</body>
+</html>
+

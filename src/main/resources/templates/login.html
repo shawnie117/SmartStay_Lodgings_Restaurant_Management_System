@@ -1,0 +1,283 @@
+﻿<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sign In — SmartStay</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/shared.css" />
+  <style>
+    .login-page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-lg);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .login-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+
+    .login-bg::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 30% 40%, rgba(26, 42, 108, 0.3) 0%, transparent 60%),
+        radial-gradient(ellipse at 70% 60%, rgba(201, 162, 39, 0.08) 0%, transparent 50%);
+    }
+
+    .login-bg .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(60px);
+      animation: orbFloat 12s ease-in-out infinite;
+    }
+
+    .login-bg .orb:nth-child(1) {
+      width: 400px; height: 400px;
+      background: rgba(26, 42, 108, 0.2);
+      top: -10%; left: -5%;
+    }
+
+    .login-bg .orb:nth-child(2) {
+      width: 300px; height: 300px;
+      background: rgba(201, 162, 39, 0.08);
+      bottom: -10%; right: -5%;
+      animation-delay: -4s;
+    }
+
+    .login-bg .orb:nth-child(3) {
+      width: 200px; height: 200px;
+      background: rgba(26, 42, 108, 0.15);
+      top: 50%; left: 60%;
+      animation-delay: -8s;
+    }
+
+    @keyframes orbFloat {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(30px, -20px) scale(1.05); }
+      66% { transform: translate(-20px, 20px) scale(0.95); }
+    }
+
+    .login-card {
+      position: relative;
+      z-index: 1;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: var(--space-2xl) var(--space-xl);
+      width: 100%;
+      max-width: 420px;
+      box-shadow: var(--shadow-lg);
+      animation: cardAppear 0.6s ease forwards;
+    }
+
+    @keyframes cardAppear {
+      from { opacity: 0; transform: translateY(20px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .login-header {
+      text-align: center;
+      margin-bottom: var(--space-xl);
+    }
+
+    .login-logo {
+      width: 56px;
+      height: 56px;
+      background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto var(--space-md);
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: var(--bg);
+    }
+
+    .login-header h1 {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      margin-bottom: var(--space-xs);
+    }
+
+    .login-header p {
+      color: var(--fg-secondary);
+      font-size: 0.9375rem;
+      margin: 0;
+    }
+
+    .login-form .form-group { margin-bottom: var(--space-md); }
+
+    .login-form .form-input {
+      background: var(--bg);
+      border: 1px solid var(--border);
+    }
+
+    .login-form .form-input:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(201, 162, 39, 0.15);
+    }
+
+    .login-form .input-icon {
+      position: relative;
+    }
+
+    .login-form .input-icon svg {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--fg-muted);
+      width: 18px;
+      height: 18px;
+      pointer-events: none;
+    }
+
+    .login-form .input-icon .form-input {
+      padding-left: 44px;
+    }
+
+    .login-extras {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-lg);
+    }
+
+    .forgot-link {
+      font-size: 0.875rem;
+      color: var(--gold);
+      font-weight: 500;
+    }
+
+    .forgot-link:hover { color: var(--gold-light); }
+
+    .login-divider {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      margin: var(--space-lg) 0;
+      color: var(--fg-muted);
+      font-size: 0.8125rem;
+    }
+
+    .login-divider::before,
+    .login-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .login-footer {
+      text-align: center;
+      margin-top: var(--space-lg);
+      font-size: 0.875rem;
+      color: var(--fg-secondary);
+    }
+
+    .login-footer a { color: var(--gold); font-weight: 600; }
+
+    .back-link {
+      position: absolute;
+      top: var(--space-lg);
+      left: var(--space-lg);
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      color: var(--fg-secondary);
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    .back-link:hover { color: var(--gold); }
+
+    @media (max-width: 480px) {
+      .login-card {
+        padding: var(--space-xl) var(--space-md);
+        border-radius: var(--radius-lg);
+      }
+    }
+  </style>
+</head>
+<body>
+  <a href="/" th:href="@{/}" class="back-link">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    Back to SmartStay
+  </a>
+
+  <div class="login-page">
+    <button class="theme-toggle" aria-label="Toggle theme" style="position:absolute;top:var(--space-lg);right:var(--space-lg);z-index:10">
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+    </button>
+    <div class="login-bg">
+      <div class="orb"></div>
+      <div class="orb"></div>
+      <div class="orb"></div>
+    </div>
+
+    <div class="login-card">
+      <div class="login-header">
+        <div class="login-logo">S</div>
+        <h1>Welcome back</h1>
+        <p>Sign in to your SmartStay account</p>
+      </div>
+
+      <div class="alert alert-danger" th:if="${param.error}">Invalid email or password.</div>
+      <div class="alert alert-success" th:if="${param.logout}">You have been logged out.</div>
+
+      <form class="login-form" action="/login" th:action="@{/login}" method="post">
+        <div class="form-group">
+          <label class="form-label" for="email">Email address</label>
+          <div class="input-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 4l-10 8L2 4"/></svg>
+            <input type="email" id="email" name="username" class="form-input" placeholder="admin@smartstay.com" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <div class="input-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            <input type="password" id="password" name="password" class="form-input" placeholder="Enter your password" required />
+          </div>
+        </div>
+
+        <div class="login-extras">
+          <label class="form-check">
+            <input type="checkbox" id="remember" />
+            Remember me
+          </label>
+          <a href="#" class="forgot-link">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block btn-lg">Sign In</button>
+      </form>
+
+      <div class="login-divider">or</div>
+
+      <a class="btn btn-secondary btn-block" th:href="@{/guest/login}">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>
+        Continue as Guest
+      </a>
+
+      <div class="login-footer">
+        Need access? Please contact the administrator.
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/shared.js"></script>
+</body>
+</html>

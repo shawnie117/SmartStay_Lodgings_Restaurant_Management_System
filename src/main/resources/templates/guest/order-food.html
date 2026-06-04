@@ -1,0 +1,162 @@
+﻿<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Order Food — SmartStay</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/shared.css" />
+  <style>
+    body { background: var(--bg-tertiary); }
+    .guest-header { display: flex; align-items: center; gap: var(--space-md); margin-bottom: var(--space-lg); }
+    .guest-header a { color: var(--fg-secondary); }
+    .guest-header h2 { margin: 0; font-size: 1.25rem; }
+    .guest-header .theme-toggle { margin-left: auto; }
+    .cart-count { background: var(--gold); color: var(--bg); width: 20px; height: 20px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 0.6875rem; font-weight: 700; }
+  </style>
+</head>
+<body>
+  <div class="guest-portal">
+    <div class="guest-header">
+      <a th:href="@{/guest/{token}/portal(token=${token})}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></a>
+      <h2>Order Food</h2>
+      <span class="cart-count" id="cartCount">0</span>
+      <button class="theme-toggle" aria-label="Toggle theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+      </button>
+    </div>
+
+    <div class="category-tabs">
+      <button class="category-tab active" data-category="all">All</button>
+    </div>
+
+    <div class="food-grid" id="foodGrid">
+      <div class="food-card fade-up" th:each="item : ${menuItems}" th:attr="data-category=${item.category != null ? #strings.toLowerCase(item.category) : 'other'},data-price=${item.price},data-name=${item.name},data-item-id=${item.id}">
+        <div class="food-image">&#127859;</div>
+        <div class="food-info"><div class="food-name" th:text="${item.name}">Item</div><div class="food-price" th:text="'₹' + ${item.price}">₹0</div></div>
+        <div class="food-actions"><div class="food-qty"><button class="qty-minus" disabled>&minus;</button><span class="qty-val">0</span><button class="qty-plus">+</button></div></div>
+      </div>
+      <div class="text-muted" th:if="${#lists.isEmpty(menuItems)}">No menu items available.</div>
+    </div>
+  </div>
+
+  <!-- Floating Cart Bar -->
+  <div class="floating-cart" id="floatingCart" style="display:none">
+    <div class="cart-total"><span id="cartTotal">&#8377;0</span> &middot; <span id="cartItemCount">0 items</span></div>
+    <button class="btn btn-primary" id="placeOrderBtn">Place Order</button>
+  </div>
+
+  <!-- Floating AI Button -->
+  <button class="floating-ai-btn" data-ai-open aria-label="Ask AI">
+    <span class="pulse-ring"></span>
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8L12 2z"/></svg>
+  </button>
+
+  <!-- AI Assistant Overlay -->
+  <div class="ai-assistant-overlay">
+    <div class="ai-assistant-panel">
+      <div class="ai-assistant-header">
+        <div class="ai-title">
+          <span class="sparkle"><svg width="20" height="20" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8L12 2z"/></svg></span>
+          <h3>SmartStay Assistant</h3>
+        </div>
+        <button class="ai-assistant-close" aria-label="Close">&times;</button>
+      </div>
+      <div class="ai-assistant-body">
+        <div class="chat-message ai">Welcome! I can help you order food, check your bill, or answer any questions. What would you like?</div>
+      </div>
+      <div class="ai-quick-actions">
+        <button class="ai-quick-action" data-prompt="Order food">🍽️ Order Food</button>
+        <button class="ai-quick-action" data-prompt="Show my bill">📋 My Bill</button>
+        <button class="ai-quick-action" data-prompt="Request housekeeping">🧹 Housekeeping</button>
+        <button class="ai-quick-action" data-prompt="WiFi details">📶 WiFi</button>
+      </div>
+      <div class="ai-assistant-input">
+        <input type="text" class="form-input ai-chat-input" placeholder="Ask me anything..." />
+        <button class="btn btn-primary ai-send-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/shared.js"></script>
+  <script th:inline="javascript">
+    var cart = {};
+    var cartCountEl = document.getElementById('cartCount');
+    var cartTotalEl = document.getElementById('cartTotal');
+    var cartItemCountEl = document.getElementById('cartItemCount');
+    var floatingCart = document.getElementById('floatingCart');
+    var orderEndpoint = /*[[${'/guest/' + token + '/order-food'}]]*/ '';
+
+    document.querySelectorAll('.qty-plus').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var card = btn.closest('.food-card');
+        var name = card.getAttribute('data-name');
+        var price = parseInt(card.getAttribute('data-price'));
+        var itemId = card.getAttribute('data-item-id');
+        var qtyEl = card.querySelector('.qty-val');
+        var minusBtn = card.querySelector('.qty-minus');
+        var qty = parseInt(qtyEl.textContent) + 1;
+        qtyEl.textContent = qty;
+        minusBtn.disabled = false;
+        cart[name] = { qty: qty, price: price, itemId: itemId };
+        updateCart();
+      });
+    });
+
+    document.querySelectorAll('.qty-minus').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var card = btn.closest('.food-card');
+        var name = card.getAttribute('data-name');
+        var qtyEl = card.querySelector('.qty-val');
+        var qty = parseInt(qtyEl.textContent) - 1;
+        if (qty <= 0) { qty = 0; btn.disabled = true; delete cart[name]; }
+        else { cart[name].qty = qty; }
+        qtyEl.textContent = qty;
+        updateCart();
+      });
+    });
+
+    function updateCart() {
+      var totalItems = 0, totalPrice = 0;
+      for (var name in cart) { totalItems += cart[name].qty; totalPrice += cart[name].qty * cart[name].price; }
+      cartCountEl.textContent = totalItems;
+      cartTotalEl.textContent = '\u20b9' + totalPrice;
+      cartItemCountEl.textContent = totalItems + ' item' + (totalItems !== 1 ? 's' : '');
+      floatingCart.style.display = totalItems > 0 ? 'flex' : 'none';
+    }
+
+    // Category tabs
+    document.querySelectorAll('.category-tab').forEach(function(tab) {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.category-tab').forEach(function(t) { t.classList.remove('active'); });
+        tab.classList.add('active');
+        var cat = tab.getAttribute('data-category');
+        document.querySelectorAll('.food-card').forEach(function(card) {
+          card.style.display = (cat === 'all' || card.getAttribute('data-category') === cat) ? '' : 'none';
+        });
+      });
+    });
+
+    document.getElementById('placeOrderBtn').addEventListener('click', async function() {
+      var items = [];
+      for (var name in cart) {
+        items.push({ itemId: cart[name].itemId, qty: cart[name].qty });
+      }
+      if (!items.length || !orderEndpoint) return;
+      const res = await fetch(orderEndpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items: items })
+      });
+      if (res.ok) {
+        alert('Order placed successfully.');
+        window.location.reload();
+      }
+    });
+  </script>
+</body>
+</html>
+

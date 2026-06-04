@@ -1,0 +1,161 @@
+﻿<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Feedback — SmartStay</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/shared.css" />
+  <style>
+    body{background:var(--bg-tertiary)}.feedback-header{display:flex;align-items:center;gap:var(--space-md);margin-bottom:var(--space-xl)}.feedback-header a{color:var(--fg-secondary)}.feedback-header h2{margin:0;font-size:1.25rem}.feedback-header .theme-toggle{margin-left:auto}.submit-btn{transition:all var(--transition-base)}.submit-btn.submitting{opacity:0.7;pointer-events:none}.success-msg{display:none;text-align:center;padding:var(--space-2xl) 0}.success-msg .check{width:64px;height:64px;border-radius:50%;background:var(--success-bg);display:flex;align-items:center;justify-content:center;margin:0 auto var(--space-md);font-size:2rem;color:var(--success)}
+  </style>
+</head>
+<body>
+  <div class="guest-portal">
+    <div id="feedbackForm">
+      <div class="feedback-header">
+        <a th:href="@{/guest/{token}/portal(token=${token})}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></a>
+        <h2>Share Your Feedback</h2>
+        <button class="theme-toggle" aria-label="Toggle theme">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+        </button>
+      </div>
+      <p class="text-muted text-small mb-4">Help us improve your experience at SmartStay.</p>
+
+      <div class="rating-section fade-up">
+        <label>Room Quality</label>
+        <div class="star-rating" data-rating="room">
+          <span class="star" data-value="1">&#9733;</span>
+          <span class="star" data-value="2">&#9733;</span>
+          <span class="star" data-value="3">&#9733;</span>
+          <span class="star" data-value="4">&#9733;</span>
+          <span class="star" data-value="5">&#9733;</span>
+        </div>
+      </div>
+
+      <div class="rating-section fade-up" style="animation-delay:0.1s">
+        <label>Restaurant</label>
+        <div class="star-rating" data-rating="restaurant">
+          <span class="star" data-value="1">&#9733;</span>
+          <span class="star" data-value="2">&#9733;</span>
+          <span class="star" data-value="3">&#9733;</span>
+          <span class="star" data-value="4">&#9733;</span>
+          <span class="star" data-value="5">&#9733;</span>
+        </div>
+      </div>
+
+      <div class="rating-section fade-up" style="animation-delay:0.2s">
+        <label>Staff Service</label>
+        <div class="star-rating" data-rating="staff">
+          <span class="star" data-value="1">&#9733;</span>
+          <span class="star" data-value="2">&#9733;</span>
+          <span class="star" data-value="3">&#9733;</span>
+          <span class="star" data-value="4">&#9733;</span>
+          <span class="star" data-value="5">&#9733;</span>
+        </div>
+      </div>
+
+      <div class="rating-section fade-up" style="animation-delay:0.3s">
+        <label>Cleanliness</label>
+        <div class="star-rating" data-rating="cleanliness">
+          <span class="star" data-value="1">&#9733;</span>
+          <span class="star" data-value="2">&#9733;</span>
+          <span class="star" data-value="3">&#9733;</span>
+          <span class="star" data-value="4">&#9733;</span>
+          <span class="star" data-value="5">&#9733;</span>
+        </div>
+      </div>
+
+      <div class="form-group fade-up" style="animation-delay:0.4s">
+        <label class="form-label">Additional Comments</label>
+        <textarea class="form-textarea" placeholder="Tell us about your experience..." rows="4"></textarea>
+      </div>
+
+      <button class="btn btn-primary btn-block btn-lg submit-btn fade-up" style="animation-delay:0.5s" id="submitBtn">Submit Feedback</button>
+    </div>
+
+    <div class="success-msg" id="successMsg">
+      <div class="check">&#10003;</div>
+      <h3>Thank You!</h3>
+      <p class="text-muted">Your feedback helps us improve. We appreciate your time.</p>
+      <a th:href="@{/guest/{token}/portal(token=${token})}" class="btn btn-primary mt-3">Back to Portal</a>
+    </div>
+  </div>
+
+  <!-- Floating AI Button -->
+  <button class="floating-ai-btn" data-ai-open aria-label="Ask AI">
+    <span class="pulse-ring"></span>
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8L12 2z"/></svg>
+  </button>
+
+  <!-- AI Assistant Overlay -->
+  <div class="ai-assistant-overlay">
+    <div class="ai-assistant-panel">
+      <div class="ai-assistant-header">
+        <div class="ai-title">
+          <span class="sparkle"><svg width="20" height="20" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8L12 2z"/></svg></span>
+          <h3>SmartStay Assistant</h3>
+        </div>
+        <button class="ai-assistant-close" aria-label="Close">&times;</button>
+      </div>
+      <div class="ai-assistant-body">
+        <div class="chat-message ai">Thanks for staying with us! I can help with anything you need — food, billing, services, or hotel info. How can I help?</div>
+      </div>
+      <div class="ai-quick-actions">
+        <button class="ai-quick-action" data-prompt="Order food">🍽️ Order Food</button>
+        <button class="ai-quick-action" data-prompt="Show my bill">📋 My Bill</button>
+        <button class="ai-quick-action" data-prompt="Checkout info">🚗 Checkout</button>
+        <button class="ai-quick-action" data-prompt="WiFi details">📶 WiFi</button>
+      </div>
+      <div class="ai-assistant-input">
+        <input type="text" class="form-input ai-chat-input" placeholder="Ask me anything..." />
+        <button class="btn btn-primary ai-send-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/shared.js"></script>
+  <script>
+    var ratings = { room: 0, restaurant: 0, staff: 0, cleanliness: 0 };
+
+    document.querySelectorAll('.star-rating').forEach(function(container) {
+      var category = container.getAttribute('data-rating');
+      container.querySelectorAll('.star').forEach(function(star) {
+        star.addEventListener('click', function() {
+          var value = parseInt(star.getAttribute('data-value'));
+          ratings[category] = value;
+          container.querySelectorAll('.star').forEach(function(s, i) {
+            s.classList.toggle('active', i < value);
+          });
+        });
+        star.addEventListener('mouseenter', function() {
+          var value = parseInt(star.getAttribute('data-value'));
+          container.querySelectorAll('.star').forEach(function(s, i) {
+            s.style.color = i < value ? 'var(--gold)' : '';
+          });
+        });
+        star.addEventListener('mouseleave', function() {
+          container.querySelectorAll('.star').forEach(function(s) {
+            s.style.color = '';
+          });
+        });
+      });
+    });
+
+    document.getElementById('submitBtn').addEventListener('click', function() {
+      var btn = this;
+      btn.classList.add('submitting');
+      btn.textContent = 'Submitting...';
+
+      setTimeout(function() {
+        document.getElementById('feedbackForm').style.display = 'none';
+        document.getElementById('successMsg').style.display = 'block';
+      }, 1200);
+    });
+  </script>
+</body>
+</html>
+

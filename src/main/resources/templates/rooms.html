@@ -1,0 +1,201 @@
+﻿<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Room Management — SmartStay</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/shared.css" />
+  <style>
+    .view-toggle { display: flex; gap: var(--space-sm); }
+    .view-btn { padding: 8px 16px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); color: var(--fg-secondary); cursor: pointer; font-size: 0.8125rem; font-weight: 500; transition: all var(--transition-fast); min-height: 36px; display: flex; align-items: center; gap: 6px; }
+    .view-btn.active { background: var(--navy); border-color: var(--gold); color: var(--gold); }
+    .room-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: var(--space-md); }
+    .room-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--space-lg); transition: all var(--transition-base); cursor: pointer; }
+    .room-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-gold); border-color: var(--gold); }
+    .room-card .room-number { font-size: 1.25rem; font-weight: 700; font-family: var(--font-mono); margin-bottom: var(--space-sm); }
+    .room-card .room-type { font-size: 0.8125rem; color: var(--fg-secondary); margin-bottom: var(--space-md); }
+    .room-card .room-price { font-size: 1rem; font-weight: 600; color: var(--gold); }
+    .room-card .room-price span { font-size: 0.75rem; color: var(--fg-muted); font-weight: 400; }
+    .room-card .room-footer { margin-top: var(--space-md); padding-top: var(--space-sm); border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+    .table-view { display: none; }
+    .table-view.active { display: block; }
+    .grid-view.active { display: block; }
+    .grid-view { display: none; }
+    @media (max-width: 768px) { .room-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 480px) { .room-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="app-layout">
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand"><div class="logo">S</div><h2>Smart<span>Stay</span></h2></div>
+      <nav class="sidebar-nav">
+        <div class="sidebar-section">Main</div>
+        <a th:href="@{/dashboard}"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</a>
+        <a th:href="@{/rooms}" class="active"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7v11a2 2 0 002 2h14a2 2 0 002-2V7"/><path d="M21 7H3l2-4h14l2 4z"/></svg>Rooms</a>
+        <a th:href="@{/bookings}"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Bookings</a>
+        <a th:href="@{/restaurant}"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 010 8h-1"/></svg>Restaurant</a>
+        <div class="sidebar-section">Finance</div>
+        <a th:href="@{/billing}"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/></svg>Billing</a>
+        <a th:href="@{/reports}"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>Reports</a>
+        <div class="sidebar-section">Intelligence</div>
+        <a th:href="@{/admin/ai-insights}"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1010 10A10 10 0 0012 2z"/></svg>AI Insights</a>
+        <div class="sidebar-section">Admin</div>
+        <a th:href="@{/staff}"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Staff</a>
+        <a th:href="@{/guest/login}"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/></svg>Guest Portal</a>
+      </nav>
+      <div class="sidebar-footer"><div class="sidebar-user"><div class="avatar">AK</div><div class="sidebar-user-info"><div class="name">Admin Kumar</div><div class="role">General Manager</div></div></div></div>
+    </aside>
+    <main class="main-content">
+      <header class="top-navbar">
+        <div class="flex items-center gap-md"><button class="hamburger" id="hamburgerBtn"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg></button><h1 class="page-title">Room Management</h1></div>
+        <div class="navbar-actions">
+          <button class="theme-toggle" aria-label="Toggle theme">
+            <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+            <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+          </button>
+          <button class="btn btn-primary btn-sm" data-modal-target="addRoomModal"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg> Add Room</button>
+        </div>
+      </header>
+      <div class="page-content">
+        <div class="card fade-up mb-4">
+          <div class="section-title">Quick Add Room</div>
+          <div class="row g-3 align-items-end">
+            <div class="col-lg-2 col-md-4"><div class="form-group"><label class="form-label">Room No.</label><input type="text" id="quickRoomNumber" class="form-input" placeholder="601" /></div></div>
+            <div class="col-lg-3 col-md-4"><div class="form-group"><label class="form-label">Type</label><input type="text" id="quickRoomType" class="form-input" placeholder="Deluxe" /></div></div>
+            <div class="col-lg-2 col-md-4"><div class="form-group"><label class="form-label">Price</label><input type="number" id="quickRoomPrice" class="form-input" placeholder="4500" min="0" /></div></div>
+            <div class="col-lg-2 col-md-4"><div class="form-group"><label class="form-label">Status</label><select class="form-select" id="quickRoomStatus"><option value="AVAILABLE">Available</option><option value="OCCUPIED">Occupied</option><option value="MAINTENANCE">Maintenance</option></select></div></div>
+            <div class="col-lg-2 col-md-4"><div class="form-group"><label class="form-label">Capacity</label><input type="number" id="quickRoomCapacity" class="form-input" value="2" min="1" /></div></div>
+            <div class="col-lg-1 col-md-4"><button class="btn btn-primary w-100" id="quickAddRoomBtn" style="min-height:44px">Add</button></div>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="row g-3 mb-4">
+          <div class="col-6 col-lg-3"><div class="stat-card fade-up"><div class="stat-value text-gold count-up" th:attr="data-target=${totalRooms}">0</div><div class="stat-label">Total Rooms</div></div></div>
+          <div class="col-6 col-lg-3"><div class="stat-card fade-up" style="animation-delay:0.1s"><div class="stat-value text-success count-up" th:attr="data-target=${availableRooms}">0</div><div class="stat-label">Available</div></div></div>
+          <div class="col-6 col-lg-3"><div class="stat-card fade-up" style="animation-delay:0.2s"><div class="stat-value" style="color:var(--warning)" th:attr="data-target=${occupiedRooms}">0</div><div class="stat-label">Occupied</div></div></div>
+          <div class="col-6 col-lg-3"><div class="stat-card fade-up" style="animation-delay:0.3s"><div class="stat-value" style="color:var(--danger)" th:attr="data-target=${maintenanceRooms}">0</div><div class="stat-label">Maintenance</div></div></div>
+        </div>
+        <!-- View Toggle -->
+        <div class="flex items-center justify-between mb-3">
+          <div class="view-toggle">
+            <button class="view-btn active" data-view="grid"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg> Grid</button>
+            <button class="view-btn" data-view="table"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg> Table</button>
+          </div>
+        </div>
+        <!-- Grid View -->
+        <div class="grid-view active">
+          <div class="room-grid">
+            <div class="room-card fade-up" th:each="room : ${rooms}">
+              <div class="flex justify-between">
+                <div class="room-number" th:text="${room.roomNumber}">101</div>
+                <span class="badge" th:classappend="${room.status} == 'AVAILABLE' ? ' badge-success' : (${room.status} == 'OCCUPIED' ? ' badge-warning' : ' badge-danger')">
+                  <span class="dot"></span><span th:text="${room.status}">Status</span>
+                </span>
+              </div>
+              <div class="room-type" th:text="${room.roomType}">Room Type</div>
+              <div class="room-price" th:text="'₹' + ${room.price}">₹0 <span>/ night</span></div>
+              <div class="room-footer"><span class="text-xs text-muted" th:text="'Capacity ' + ${room.capacity}">Capacity</span></div>
+            </div>
+            <div class="text-muted" th:if="${#lists.isEmpty(rooms)}">No rooms added yet.</div>
+          </div>
+        </div>
+        <!-- Table View -->
+        <div class="table-view">
+          <div class="table-wrapper">
+            <table>
+              <thead><tr><th>Room</th><th>Type</th><th>Price</th><th>Status</th><th>Capacity</th></tr></thead>
+              <tbody>
+                <tr th:each="room : ${rooms}">
+                  <td><strong th:text="${room.roomNumber}">101</strong></td>
+                  <td th:text="${room.roomType}">Type</td>
+                  <td th:text="'₹' + ${room.price}">₹0</td>
+                  <td><span class="badge" th:classappend="${room.status} == 'AVAILABLE' ? ' badge-success' : (${room.status} == 'OCCUPIED' ? ' badge-warning' : ' badge-danger')"><span class="dot"></span><span th:text="${room.status}">Status</span></span></td>
+                  <td th:text="${room.capacity}">2</td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(rooms)}"><td colspan="5" class="text-muted">No rooms added yet.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <nav class="bottom-nav"><div class="bottom-nav-inner"><a th:href="@{/dashboard}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Home</a><a th:href="@{/rooms}" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7v11a2 2 0 002 2h14a2 2 0 002-2V7"/></svg>Rooms</a><a th:href="@{/bookings}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/></svg>Bookings</a><a th:href="@{/restaurant}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 010 8h-1"/></svg>Orders</a><a th:href="@{/reports}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>Reports</a></div></nav>
+
+  <!-- Add Room Modal -->
+  <div class="modal-overlay" id="addRoomModal">
+    <div class="modal">
+      <div class="modal-header"><h3>Add New Room</h3><button class="modal-close">&times;</button></div>
+      <div class="modal-body">
+        <div class="form-group"><label class="form-label">Room Number</label><input type="text" id="roomNumber" class="form-input" placeholder="e.g. 601" /></div>
+        <div class="form-group"><label class="form-label">Room Type</label><input type="text" id="roomType" class="form-input" placeholder="Standard / Deluxe" /></div>
+        <div class="form-group"><label class="form-label">Price per Night (&#8377;)</label><input type="number" id="roomPrice" class="form-input" placeholder="e.g. 4500" /></div>
+        <div class="form-group"><label class="form-label">Status</label>
+          <select class="form-select" id="roomStatus">
+            <option value="AVAILABLE">Available</option>
+            <option value="OCCUPIED">Occupied</option>
+            <option value="MAINTENANCE">Maintenance</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Capacity</label><input type="number" id="roomCapacity" class="form-input" value="2" min="1" /></div>
+      </div>
+      <div class="modal-footer"><button class="btn btn-ghost modal-close">Cancel</button><button class="btn btn-primary" id="addRoomBtn">Add Room</button></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/shared.js"></script>
+  <script>
+    async function submitRoom(payload) {
+      const res = await fetch('/api/rooms', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error('Unable to save room');
+      window.location.reload();
+    }
+
+    document.querySelectorAll('.view-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.view-btn').forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        var view = btn.getAttribute('data-view');
+        document.querySelector('.grid-view').classList.toggle('active', view === 'grid');
+        document.querySelector('.table-view').classList.toggle('active', view === 'table');
+      });
+    });
+
+    document.getElementById('quickAddRoomBtn').addEventListener('click', async function() {
+      const payload = {
+        roomNumber: document.getElementById('quickRoomNumber').value,
+        roomType: document.getElementById('quickRoomType').value,
+        price: document.getElementById('quickRoomPrice').value || 0,
+        status: document.getElementById('quickRoomStatus').value,
+        capacity: document.getElementById('quickRoomCapacity').value || 2
+      };
+      if (!payload.roomNumber || !payload.roomType) return;
+      try { await submitRoom(payload); } catch (e) { alert(e.message); }
+    });
+  </script>
+  <script>
+    document.getElementById('addRoomBtn').addEventListener('click', async function() {
+      const payload = {
+        roomNumber: document.getElementById('roomNumber').value,
+        roomType: document.getElementById('roomType').value,
+        price: document.getElementById('roomPrice').value || 0,
+        status: document.getElementById('roomStatus').value,
+        capacity: document.getElementById('roomCapacity').value || 2
+      };
+      if (!payload.roomNumber || !payload.roomType) return;
+      try { await submitRoom(payload); } catch (e) { alert(e.message); }
+    });
+  </script>
+</body>
+</html>
+

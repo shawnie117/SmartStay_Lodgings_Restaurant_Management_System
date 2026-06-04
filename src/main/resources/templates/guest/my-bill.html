@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>My Bill — SmartStay</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/shared.css" />
+  <style>body{background:var(--bg-tertiary)}.bill-header{display:flex;align-items:center;gap:var(--space-md);margin-bottom:var(--space-lg)}.bill-header a{color:var(--fg-secondary)}.bill-header h2{margin:0;font-size:1.25rem}.bill-header .theme-toggle{margin-left:auto}.updated{text-align:center;color:var(--fg-muted);font-size:0.75rem;margin-bottom:var(--space-md)}</style>
+</head>
+<body>
+  <div class="guest-portal">
+    <div class="bill-header">
+      <a th:href="@{/guest/{token}/portal(token=${token})}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg></a>
+      <h2>My Bill</h2>
+      <button class="theme-toggle" aria-label="Toggle theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+      </button>
+    </div>
+      <p class="updated">Last updated: <span th:text="${#temporals.format(#temporals.createNow(), 'dd MMM yyyy, h:mm a')}">25 May 2026, 2:30 PM</span></p>
+
+     <div th:if="${booking != null}">
+       <!-- Room Charges -->
+       <div class="accordion-item open fade-up">
+         <div class="accordion-header">Room Charges <span class="chevron">&#9660;</span></div>
+         <div class="accordion-body"><div class="accordion-body-inner">
+           <div class="detail-row flex justify-between py-2" style="border-bottom:1px solid var(--border);font-size:0.875rem">
+             <span th:if="${booking.room != null}" th:text="${booking.room.roomType + ' Room · ' + booking.checkinDate}">Room Type · Date</span>
+             <span th:if="${booking.room == null}">Room · Date</span>
+             <span>₹<span th:text="${#numbers.formatDecimal(roomCharge, 1, 2)}">0</span></span>
+           </div>
+           <div class="detail-row flex justify-between py-2 font-weight-600" style="font-size:0.875rem">
+             <span>Room Total</span>
+             <span>₹<span th:text="${#numbers.formatDecimal(roomCharge, 1, 2)}">0</span></span>
+           </div>
+         </div></div>
+       </div>
+
+       <!-- Food Orders -->
+       <div class="accordion-item fade-up" style="animation-delay:0.1s">
+         <div class="accordion-header">Food Orders <span class="chevron">&#9660;</span></div>
+         <div class="accordion-body" th:if="${orders != null && !#lists.isEmpty(orders)}">
+           <div class="accordion-body-inner">
+             <div th:each="order : ${orders}" style="margin-bottom:var(--space-sm)">
+                <div class="text-xs text-muted mb-1" th:text="${#temporals.format(order.orderedAt, 'dd MMM, h:mm a')} + ' · #ORD-' + ${order.id}">Date · #ORD-ID</div>
+               <div class="detail-row flex justify-between py-1" style="font-size:0.8125rem">
+                 <span th:text="${order.quantity} + 'x ' + ${order.foodItem}">Qty x Item</span>
+                 <span>₹<span th:text="${#numbers.formatDecimal(order.amount * (order.quantity != null ? order.quantity : 1), 1, 2)}">0</span></span>
+               </div>
+             </div>
+             <div class="detail-row flex justify-between py-2 font-weight-600" style="font-size:0.875rem">
+               <span>Food Subtotal</span>
+               <span>₹<span th:text="${#numbers.formatDecimal(foodTotal, 1, 2)}">0</span></span>
+             </div>
+           </div>
+         </div>
+         <div class="accordion-body" th:unless="${orders != null && !#lists.isEmpty(orders)}">
+           <div class="accordion-body-inner" style="color: var(--fg-muted);">No food orders yet</div>
+         </div>
+       </div>
+
+       <!-- GST Breakdown -->
+       <div class="accordion-item fade-up" style="animation-delay:0.2s">
+         <div class="accordion-header">GST Breakdown <span class="chevron">&#9660;</span></div>
+         <div class="accordion-body"><div class="accordion-body-inner">
+           <div class="detail-row flex justify-between py-2" style="border-bottom:1px solid var(--border);font-size:0.875rem">
+             <span>GST on Rooms (12%)</span>
+             <span>₹<span th:text="${#numbers.formatDecimal(gstOnRooms, 1, 2)}">0</span></span>
+           </div>
+           <div class="detail-row flex justify-between py-2" style="border-bottom:1px solid var(--border);font-size:0.875rem">
+             <span>GST on Food (5%)</span>
+             <span>₹<span th:text="${#numbers.formatDecimal(gstOnFood, 1, 2)}">0</span></span>
+           </div>
+           <div class="detail-row flex justify-between py-2 font-weight-600" style="font-size:0.875rem">
+             <span>Total GST</span>
+             <span>₹<span th:text="${#numbers.formatDecimal(gstOnRooms + gstOnFood, 1, 2)}">0</span></span>
+           </div>
+         </div></div>
+       </div>
+
+       <!-- Grand Total -->
+       <div class="card fade-up" style="animation-delay:0.3s;margin-top:var(--space-lg);border-color:var(--gold)">
+         <div class="flex justify-between" style="font-size:0.9375rem">
+           <span>Room Charges</span>
+           <span>₹<span th:text="${#numbers.formatDecimal(roomCharge, 1, 2)}">0</span></span>
+         </div>
+         <div class="flex justify-between" style="font-size:0.9375rem;margin-top:4px">
+           <span>Food Orders</span>
+           <span>₹<span th:text="${#numbers.formatDecimal(foodTotal, 1, 2)}">0</span></span>
+         </div>
+         <div class="flex justify-between" style="font-size:0.9375rem;margin-top:4px">
+           <span>GST</span>
+           <span>₹<span th:text="${#numbers.formatDecimal(gstOnRooms + gstOnFood, 1, 2)}">0</span></span>
+         </div>
+         <div class="flex justify-between" style="font-size:1.125rem;font-weight:700;color:var(--gold);margin-top:var(--space-md);padding-top:var(--space-md);border-top:2px solid var(--gold)">
+           <span>Grand Total</span>
+           <span>₹<span th:text="${#numbers.formatDecimal(grandTotal, 1, 2)}">0</span></span>
+         </div>
+       </div>
+     </div>
+     <div th:unless="${booking != null}" class="text-center text-muted" style="padding: var(--space-xl);">
+       <p>Unable to load billing information. Please try again or contact support.</p>
+     </div>
+  </div>
+
+  <!-- Floating AI Button -->
+  <button class="floating-ai-btn" data-ai-open aria-label="Ask AI">
+    <span class="pulse-ring"></span>
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8L12 2z"/></svg>
+  </button>
+
+  <!-- AI Assistant Overlay -->
+  <div class="ai-assistant-overlay">
+    <div class="ai-assistant-panel">
+      <div class="ai-assistant-header">
+        <div class="ai-title">
+          <span class="sparkle"><svg width="20" height="20" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8L12 2z"/></svg></span>
+          <h3>SmartStay Assistant</h3>
+        </div>
+        <button class="ai-assistant-close" aria-label="Close">&times;</button>
+      </div>
+      <div class="ai-assistant-body">
+        <div class="chat-message ai">I can help you understand your bill, order food, or assist with anything else. What do you need?</div>
+      </div>
+      <div class="ai-quick-actions">
+        <button class="ai-quick-action" data-prompt="Explain my charges">📋 Explain Charges</button>
+        <button class="ai-quick-action" data-prompt="Order food">🍽️ Order Food</button>
+        <button class="ai-quick-action" data-prompt="Checkout info">🚗 Checkout</button>
+        <button class="ai-quick-action" data-prompt="WiFi details">📶 WiFi</button>
+      </div>
+      <div class="ai-assistant-input">
+        <input type="text" class="form-input ai-chat-input" placeholder="Ask me anything..." />
+        <button class="btn btn-primary ai-send-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/shared.js"></script>
+</body>
+</html>

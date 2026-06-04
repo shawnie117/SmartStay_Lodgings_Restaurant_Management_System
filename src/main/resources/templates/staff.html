@@ -1,0 +1,140 @@
+﻿<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Staff Management — SmartStay</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/shared.css" />
+</head>
+<body>
+  <div class="app-layout">
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand"><div class="logo">S</div><h2>Smart<span>Stay</span></h2></div>
+      <nav class="sidebar-nav">
+        <div class="sidebar-section">Main</div>
+        <a th:href="@{/dashboard}"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</a>
+        <a th:href="@{/rooms}"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7v11a2 2 0 002 2h14a2 2 0 002-2V7"/></svg>Rooms</a>
+        <a th:href="@{/bookings}"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Bookings</a>
+        <a th:href="@{/restaurant}"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 010 8h-1"/></svg>Restaurant</a>
+        <div class="sidebar-section">Finance</div>
+        <a th:href="@{/billing}"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/></svg>Billing</a>
+        <a th:href="@{/reports}"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>Reports</a>
+        <div class="sidebar-section">Intelligence</div>
+        <a th:href="@{/admin/ai-insights}"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1010 10A10 10 0 0012 2z"/></svg>AI Insights</a>
+        <div class="sidebar-section">Admin</div>
+        <a th:href="@{/staff}" class="active"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Staff</a>
+        <a th:href="@{/guest/login}"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/></svg>Guest Portal</a>
+      </nav>
+      <div class="sidebar-footer"><div class="sidebar-user"><div class="avatar">AK</div><div class="sidebar-user-info"><div class="name">Admin Kumar</div><div class="role">General Manager</div></div></div></div>
+    </aside>
+    <main class="main-content">
+      <header class="top-navbar">
+        <div class="flex items-center gap-md"><button class="hamburger" id="hamburgerBtn"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg></button><h1 class="page-title">Staff Management</h1></div>
+        <div class="navbar-actions">
+          <button class="theme-toggle" aria-label="Toggle theme">
+            <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+            <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+          </button>
+          <button class="btn btn-primary btn-sm" data-modal-target="addStaffModal"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg> Add Staff</button>
+        </div>
+      </header>
+      <div class="page-content">
+        <div class="card fade-up mb-4">
+          <div class="section-title">Quick Add Staff</div>
+          <div class="row g-3 align-items-end">
+            <div class="col-lg-3 col-md-6"><div class="form-group"><label class="form-label">Full Name</label><input type="text" id="quickStaffName" class="form-input" placeholder="Full name" /></div></div>
+            <div class="col-lg-3 col-md-6"><div class="form-group"><label class="form-label">Email</label><input type="email" id="quickStaffEmail" class="form-input" placeholder="email@smartstay.com" /></div></div>
+            <div class="col-lg-2 col-md-4"><div class="form-group"><label class="form-label">Role</label><input type="text" id="quickStaffRole" class="form-input" placeholder="Receptionist" /></div></div>
+            <div class="col-lg-2 col-md-4"><div class="form-group"><label class="form-label">Department</label><input type="text" id="quickStaffDepartment" class="form-input" placeholder="Front Desk" /></div></div>
+            <div class="col-lg-1 col-md-4"><div class="form-group"><label class="form-label">Salary</label><input type="number" id="quickStaffSalary" class="form-input" value="0" min="0" /></div></div>
+            <div class="col-lg-1 col-md-4"><button class="btn btn-primary w-100" id="quickAddStaffBtn" style="min-height:44px">Add</button></div>
+          </div>
+        </div>
+
+        <div class="row g-3 mb-4">
+          <div class="col-6 col-lg-3"><div class="stat-card fade-up"><div class="stat-value text-gold count-up" th:attr="data-target=${totalStaff}">0</div><div class="stat-label">Total Staff</div></div></div>
+          <div class="col-6 col-lg-3"><div class="stat-card fade-up" style="animation-delay:0.1s"><div class="stat-value" style="color:var(--success)" data-target="0">0</div><div class="stat-label">On Duty Today</div></div></div>
+          <div class="col-6 col-lg-3"><div class="stat-card fade-up" style="animation-delay:0.2s"><div class="stat-value" style="color:var(--info)" data-target="0">0</div><div class="stat-label">Departments</div></div></div>
+          <div class="col-6 col-lg-3"><div class="stat-card fade-up" style="animation-delay:0.3s"><div class="stat-value" style="color:var(--warning)" data-target="0">0</div><div class="stat-label">On Leave</div></div></div>
+        </div>
+        <div class="card fade-up" style="animation-delay:0.2s">
+          <div class="table-wrapper">
+            <table>
+              <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Department</th><th>Salary</th><th>Joined</th></tr></thead>
+              <tbody>
+                <tr th:each="member : ${staff}">
+                  <td><div class="flex items-center gap-sm"><div style="width:32px;height:32px;border-radius:50%;background:var(--navy);display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:600;color:var(--gold)" th:text="${#strings.substring(member.name != null ? member.name : 'ST',0,2)}">ST</div><strong th:text="${member.name}">Name</strong></div></td>
+                  <td th:text="${member.email}">email</td>
+                  <td><span class="badge badge-navy" th:text="${member.role}">Role</span></td>
+                  <td th:text="${member.department}">Dept</td>
+                  <td th:text="'₹' + ${member.salary}">₹0</td>
+                  <td th:text="${#temporals.format(member.joinedAt, 'dd MMM yyyy')}">Date</td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(staff)}"><td colspan="6" class="text-muted">No staff added yet.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <nav class="bottom-nav"><div class="bottom-nav-inner"><a th:href="@{/dashboard}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Home</a><a th:href="@{/rooms}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7v11a2 2 0 002 2h14a2 2 0 002-2V7"/></svg>Rooms</a><a th:href="@{/bookings}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/></svg>Bookings</a><a th:href="@{/restaurant}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 010 8h-1"/></svg>Orders</a><a th:href="@{/reports}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>Reports</a></div></nav>
+
+  <!-- Add Staff Modal -->
+  <div class="modal-overlay" id="addStaffModal">
+    <div class="modal">
+      <div class="modal-header"><h3>Add Staff Member</h3><button class="modal-close">&times;</button></div>
+      <div class="modal-body">
+        <div class="form-group"><label class="form-label">Full Name</label><input type="text" id="staffName" class="form-input" placeholder="Full name" /></div>
+        <div class="form-group"><label class="form-label">Email</label><input type="email" id="staffEmail" class="form-input" placeholder="email@smartstay.com" /></div>
+        <div class="form-group"><label class="form-label">Role</label><input type="text" id="staffRole" class="form-input" placeholder="e.g. Receptionist" /></div>
+        <div class="form-group"><label class="form-label">Department</label><input type="text" id="staffDepartment" class="form-input" placeholder="e.g. Front Desk" /></div>
+        <div class="form-group"><label class="form-label">Monthly Salary (&#8377;)</label><input type="number" id="staffSalary" class="form-input" placeholder="e.g. 35000" /></div>
+      </div>
+      <div class="modal-footer"><button class="btn btn-ghost modal-close">Cancel</button><button class="btn btn-primary" id="addStaffBtn">Add Staff</button></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/shared.js"></script>
+  <script>
+    async function submitStaff(payload) {
+      const res = await fetch('/api/staff', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) throw new Error('Unable to save staff member');
+      window.location.reload();
+    }
+
+    document.getElementById('quickAddStaffBtn').addEventListener('click', async function() {
+      const payload = {
+        name: document.getElementById('quickStaffName').value,
+        email: document.getElementById('quickStaffEmail').value,
+        role: document.getElementById('quickStaffRole').value,
+        department: document.getElementById('quickStaffDepartment').value,
+        salary: document.getElementById('quickStaffSalary').value || 0
+      };
+      if (!payload.name || !payload.email || !payload.role) return;
+      try { await submitStaff(payload); } catch (e) { alert(e.message); }
+    });
+
+    document.getElementById('addStaffBtn').addEventListener('click', async function() {
+      const payload = {
+        name: document.getElementById('staffName').value,
+        email: document.getElementById('staffEmail').value,
+        role: document.getElementById('staffRole').value,
+        department: document.getElementById('staffDepartment').value,
+        salary: document.getElementById('staffSalary').value || 0
+      };
+      if (!payload.name || !payload.email || !payload.role) return;
+      try { await submitStaff(payload); } catch (e) { alert(e.message); }
+    });
+  </script>
+</body>
+</html>
+

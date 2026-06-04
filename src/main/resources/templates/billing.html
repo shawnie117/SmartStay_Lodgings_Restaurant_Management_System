@@ -1,0 +1,145 @@
+﻿<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Billing & Payments — SmartStay</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/shared.css" />
+</head>
+<body>
+  <div class="app-layout">
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand"><div class="logo">S</div><h2>Smart<span>Stay</span></h2></div>
+      <nav class="sidebar-nav">
+        <div class="sidebar-section">Main</div>
+        <a th:href="@{/dashboard}"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</a>
+        <a th:href="@{/rooms}"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7v11a2 2 0 002 2h14a2 2 0 002-2V7"/></svg>Rooms</a>
+        <a th:href="@{/bookings}"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Bookings</a>
+        <a th:href="@{/restaurant}"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 010 8h-1"/></svg>Restaurant</a>
+        <div class="sidebar-section">Finance</div>
+        <a th:href="@{/billing}" class="active"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/></svg>Billing</a>
+        <a th:href="@{/reports}"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>Reports</a>
+        <div class="sidebar-section">Intelligence</div>
+        <a th:href="@{/admin/ai-insights}"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1010 10A10 10 0 0012 2z"/></svg>AI Insights</a>
+        <div class="sidebar-section">Admin</div>
+        <a th:href="@{/staff}"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Staff</a>
+        <a th:href="@{/guest/login}"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/></svg>Guest Portal</a>
+      </nav>
+      <div class="sidebar-footer"><div class="sidebar-user"><div class="avatar">AK</div><div class="sidebar-user-info"><div class="name">Admin Kumar</div><div class="role">General Manager</div></div></div></div>
+    </aside>
+    <main class="main-content">
+      <header class="top-navbar">
+        <div class="flex items-center gap-md"><button class="hamburger" id="hamburgerBtn"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg></button><h1 class="page-title">Billing & Payments</h1></div>
+        <div class="navbar-actions">
+          <button class="theme-toggle" aria-label="Toggle theme">
+            <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+            <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+          </button>
+          <button class="btn btn-ghost btn-sm" onclick="window.print()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg> Print Invoice</button>
+          <button class="btn btn-primary btn-sm"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 7h10v10H7z"/></svg> Print QR</button>
+        </div>
+      </header>
+      <div class="page-content">
+       <div style="margin-bottom: var(--space-lg); display: flex; align-items: center; gap: var(--space-md);">
+         <label style="font-size: 0.9375rem; color: var(--fg-secondary); font-weight: 500;">Select Booking:</label>
+         <select id="bookingSelect" class="form-select" style="max-width: 300px;">
+           <option value="">-- All Bookings --</option>
+           <option th:each="b : ${bookings}" th:value="${b.id}" th:text="${'Room ' + (b.room != null ? b.room.roomNumber : 'N/A') + ' - ' + b.customerName + ' (#BK-' + b.id + ')'}">Room 301 - John Doe (#BK-1)</option>
+         </select>
+       </div>
+       <div class="row g-4">
+           <div class="col-lg-8">
+             <div class="invoice fade-up">
+               <div class="invoice-header">
+                 <div>
+                   <div class="invoice-logo">SmartStay</div>
+                   <p class="text-muted text-small mt-1">The Grand Palace Hotel, Mumbai</p>
+                   <p class="text-muted text-small">GSTIN: 27AABCS1234F1Z5</p>
+                 </div>
+                 <div class="invoice-details">
+                   <p><strong>Invoice #INV-2026-<span th:text="${selectedBooking != null ? selectedBooking.id : '----'}">0542</span></strong></p>
+                    <p th:text="${'Date: ' + #temporals.format(today, 'dd MMM yyyy')}">Date: 25 May 2026</p>
+                   <p th:text="${'Booking: #BK-' + (selectedBooking != null ? selectedBooking.id : '----')}">Booking: #BK-1042</p>
+                   <p th:text="${'Guest: ' + (selectedBooking != null ? selectedBooking.customerName : '--')}">Guest: Priya Sharma</p>
+                   <p th:text="${'Room: ' + (selectedBooking != null && selectedBooking.room != null ? selectedBooking.room.roomType + ' ' + selectedBooking.room.roomNumber : '--')}">Room: Deluxe 301</p>
+                 </div>
+               </div>
+
+               <table class="invoice-table">
+                 <thead><tr><th>Description</th><th class="text-right">Qty</th><th class="text-right">Rate</th><th class="text-right">Amount</th></tr></thead>
+                  <tbody th:if="${selectedBooking != null}">
+                     <tr th:if="${roomCharge != null && roomCharge > 0}">
+                       <td th:text="${selectedBooking.room != null ? selectedBooking.room.roomType + ' Room' : 'Room'} + ' — ' + ${selectedBooking.checkinDate} + ' to ' + ${selectedBooking.checkoutDate}">Room — Check-in to Check-out</td>
+                       <td class="text-right" th:text="${dayCount}">3</td>
+                       <td class="text-right" th:text="${'₹' + #numbers.formatDecimal(ratePerDay, 1, 2)}">₹4,500</td>
+                       <td class="text-right" th:text="${'₹' + #numbers.formatDecimal(roomCharge, 1, 2)}">₹13,500</td>
+                     </tr>
+                    <tr th:each="order : ${orders}" th:if="${!#lists.isEmpty(orders)}">
+                      <td th:text="${'Room Service — #ORD-' + order.id + ' · ' + order.foodItem}">Room Service Item</td>
+                      <td class="text-right" th:text="${order.quantity}">1</td>
+                      <td class="text-right" th:text="${'₹' + #numbers.formatDecimal(order.amount, 1, 2)}">₹100</td>
+                      <td class="text-right" th:text="${'₹' + #numbers.formatDecimal(order.amount * (order.quantity != null ? order.quantity : 1), 1, 2)}">₹100</td>
+                    </tr>
+                   <tr th:if="${#lists.isEmpty(orders)}">
+                     <td colspan="4" class="text-muted">No food orders</td>
+                   </tr>
+                 </tbody>
+                 <tbody th:if="${selectedBooking == null}">
+                   <tr><td colspan="4" class="text-muted">Select a booking to view details</td></tr>
+                 </tbody>
+               </table>
+
+                <div class="invoice-totals" th:if="${selectedBooking != null}">
+                  <div class="row"><span>Room Charges</span><span th:text="${'₹' + #numbers.formatDecimal(roomCharge != null ? roomCharge : 0, 1, 2)}">₹0</span></div>
+                  <div class="row"><span>Food & Services</span><span th:text="${'₹' + #numbers.formatDecimal(foodTotal != null ? foodTotal : 0, 1, 2)}">₹0</span></div>
+                  <div class="row"><span>Subtotal</span><span th:text="${'₹' + #numbers.formatDecimal(subtotal != null ? subtotal : 0, 1, 2)}">₹0</span></div>
+                  <div class="row"><span>GST on Rooms (12%)</span><span th:text="${'₹' + #numbers.formatDecimal(gstOnRooms != null ? gstOnRooms : 0, 1, 2)}">₹0</span></div>
+                  <div class="row"><span>GST on Food (5%)</span><span th:text="${'₹' + #numbers.formatDecimal(gstOnFood != null ? gstOnFood : 0, 1, 2)}">₹0</span></div>
+                  <div class="row total"><span>Grand Total</span><span th:text="${'₹' + #numbers.formatDecimal(grandTotal != null ? grandTotal : 0, 1, 2)}">₹0</span></div>
+                </div>
+
+               <div class="mt-4 pt-3" style="border-top:1px solid var(--border)">
+                 <span class="badge badge-success" style="font-size:0.875rem;padding:8px 16px"><span class="dot"></span> Payment Pending</span>
+               </div>
+             </div>
+           </div>
+           <div class="col-lg-4">
+             <div class="card fade-up" style="animation-delay:0.1s">
+               <h4 class="mb-3">Payment Actions</h4>
+               <div class="d-grid gap-2">
+                 <button class="btn btn-primary btn-block">Record Payment</button>
+                 <button class="btn btn-secondary btn-block">Send to Guest</button>
+                 <button class="btn btn-ghost btn-block" onclick="window.print()">Download PDF</button>
+               </div>
+             </div>
+              <div class="card fade-up mt-3" style="animation-delay:0.2s">
+                <h4 class="mb-3">Billing Summary</h4>
+                <div class="text-small">
+                  <div class="flex justify-between py-2" style="border-bottom:1px solid var(--border)"><span>Rooms:</span><span class="text-gold" th:text="${'₹' + #numbers.formatDecimal(roomCharge != null ? roomCharge : 0, 1, 2)}">₹0</span></div>
+                  <div class="flex justify-between py-2" style="border-bottom:1px solid var(--border)"><span>Food/Service:</span><span th:text="${'₹' + #numbers.formatDecimal(foodTotal != null ? foodTotal : 0, 1, 2)}">₹0</span></div>
+                  <div class="flex justify-between py-2" style="border-bottom:1px solid var(--border)"><span>Total GST:</span><span th:text="${'₹' + #numbers.formatDecimal((gstOnRooms != null ? gstOnRooms : 0) + (gstOnFood != null ? gstOnFood : 0), 1, 2)}">₹0</span></div>
+                  <div class="flex justify-between py-2 font-weight-600" style="font-size:1rem"><span>Grand Total:</span><span style="color: var(--gold); font-weight: 700;" th:text="${'₹' + #numbers.formatDecimal(grandTotal != null ? grandTotal : 0, 1, 2)}">₹0</span></div>
+                </div>
+              </div>
+           </div>
+         </div>
+       </div>
+    </main>
+  </div>
+  <nav class="bottom-nav"><div class="bottom-nav-inner"><a th:href="@{/dashboard}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Home</a><a th:href="@{/rooms}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7v11a2 2 0 002 2h14a2 2 0 002-2V7"/></svg>Rooms</a><a th:href="@{/bookings}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/></svg>Bookings</a><a th:href="@{/restaurant}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 010 8h-1"/></svg>Orders</a><a th:href="@{/reports}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>Reports</a></div></nav>
+
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+   <script src="/js/shared.js"></script>
+   <script>
+     document.getElementById('bookingSelect').addEventListener('change', function() {
+       if (this.value) {
+         window.location.href = '/billing?bookingId=' + this.value;
+       }
+     });
+   </script>
+</body>
+</html>
+

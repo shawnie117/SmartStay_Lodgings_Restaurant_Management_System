@@ -1,0 +1,283 @@
+﻿<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Restaurant Orders — SmartStay</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/shared.css" />
+</head>
+<body>
+  <div class="app-layout">
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand"><div class="logo">S</div><h2>Smart<span>Stay</span></h2></div>
+      <nav class="sidebar-nav">
+        <div class="sidebar-section">Main</div>
+        <a th:href="@{/dashboard}"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</a>
+        <a th:href="@{/rooms}"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7v11a2 2 0 002 2h14a2 2 0 002-2V7"/></svg>Rooms</a>
+        <a th:href="@{/bookings}"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>Bookings</a>
+        <a th:href="@{/restaurant}" class="active"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 010 8h-1"/></svg>Restaurant</a>
+        <div class="sidebar-section">Finance</div>
+        <a th:href="@{/billing}"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/></svg>Billing</a>
+        <a th:href="@{/reports}"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>Reports</a>
+        <div class="sidebar-section">Intelligence</div>
+        <a th:href="@{/admin/ai-insights}"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1010 10A10 10 0 0012 2z"/></svg>AI Insights</a>
+        <div class="sidebar-section">Admin</div>
+        <a th:href="@{/staff}"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Staff</a>
+        <a th:href="@{/guest/login}"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/></svg>Guest Portal</a>
+      </nav>
+      <div class="sidebar-footer"><div class="sidebar-user"><div class="avatar">AK</div><div class="sidebar-user-info"><div class="name">Admin Kumar</div><div class="role">General Manager</div></div></div></div>
+    </aside>
+    <main class="main-content">
+      <header class="top-navbar">
+        <div class="flex items-center gap-md"><button class="hamburger" id="hamburgerBtn"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg></button><h1 class="page-title">Restaurant Orders</h1></div>
+        <div class="navbar-actions">
+          <button class="theme-toggle" aria-label="Toggle theme">
+            <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+            <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+          </button>
+          <button class="btn btn-primary btn-sm" data-modal-target="addOrderModal">New Order</button>
+          <button class="btn btn-ghost btn-sm" data-modal-target="addMenuModal">Add Menu Item</button>
+          <span class="badge badge-danger"><span class="dot"></span> <span th:text="${#lists.size(pendingOrders)}">0</span> Pending</span>
+        </div>
+      </header>
+      <div class="page-content">
+        <div class="row g-4 mb-4">
+          <div class="col-lg-6">
+            <div class="card fade-up">
+              <div class="section-title">Quick Add Order</div>
+              <div class="form-group"><label class="form-label">Booking</label><select class="form-select" id="quickOrderBookingId"><option value="">Select booking</option><option th:each="b : ${bookings}" th:value="${b.id}" th:text="${b.room != null ? 'Room ' + b.room.roomNumber + ' - ' + b.customerName : b.customerName}">Booking</option></select></div>
+              <div class="form-group"><label class="form-label">Food Item</label><input type="text" id="quickOrderFoodItem" class="form-input" placeholder="Item name" /></div>
+              <div class="row g-3">
+                <div class="col-6"><div class="form-group"><label class="form-label">Category</label><input type="text" id="quickOrderCategory" class="form-input" placeholder="BREAKFAST" /></div></div>
+                <div class="col-3"><div class="form-group"><label class="form-label">Qty</label><input type="number" id="quickOrderQty" class="form-input" value="1" min="1" /></div></div>
+                <div class="col-3"><div class="form-group"><label class="form-label">Amount</label><input type="number" id="quickOrderAmount" class="form-input" value="0" min="0" /></div></div>
+              </div>
+              <button class="btn btn-primary w-100 mt-3" id="quickCreateOrderBtn" style="min-height:44px">Add Order</button>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="card fade-up" style="animation-delay:0.1s">
+              <div class="section-title">Quick Add Menu Item</div>
+              <div class="form-group"><label class="form-label">Name</label><input type="text" id="quickMenuName" class="form-input" placeholder="Item name" /></div>
+              <div class="row g-3">
+                <div class="col-6"><div class="form-group"><label class="form-label">Category</label><input type="text" id="quickMenuCategory" class="form-input" placeholder="BREAKFAST" /></div></div>
+                <div class="col-3"><div class="form-group"><label class="form-label">Price</label><input type="number" id="quickMenuPrice" class="form-input" value="0" min="0" /></div></div>
+                <div class="col-3"><div class="form-group"><label class="form-label">Available</label><select class="form-select" id="quickMenuAvailable"><option value="true">Yes</option><option value="false">No</option></select></div></div>
+              </div>
+              <button class="btn btn-ghost w-100 mt-3" id="quickCreateMenuBtn" style="min-height:44px">Add Menu Item</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mobile Tabs -->
+        <div class="kanban-tabs">
+          <button class="kanban-tab active" data-tab="pending">Pending <span class="badge badge-danger" style="margin-left:6px" th:text="${#lists.size(pendingOrders)}">0</span></button>
+          <button class="kanban-tab" data-tab="preparing">Preparing <span class="badge badge-warning" style="margin-left:6px" th:text="${#lists.size(preparingOrders)}">0</span></button>
+          <button class="kanban-tab" data-tab="completed">Completed <span class="badge badge-success" style="margin-left:6px" th:text="${#lists.size(completedOrders)}">0</span></button>
+        </div>
+        <!-- Kanban Board -->
+        <div class="kanban">
+          <!-- Pending -->
+          <div class="kanban-column active" data-column="pending">
+            <div class="kanban-header">
+              <h4><span class="badge badge-danger"><span class="dot"></span> Pending</span></h4>
+              <span class="kanban-count" th:text="${#lists.size(pendingOrders)}">0</span>
+            </div>
+            <div class="kanban-cards">
+              <div class="kanban-card fade-up" th:each="order : ${pendingOrders}">
+                <div class="flex justify-between mb-2">
+                  <span style="font-family:var(--font-mono);font-weight:600;color:var(--gold)" th:text="'#ORD-' + ${order.id}">#ORD-0</span>
+                  <span class="text-xs text-muted" th:text="${order.booking != null && order.booking.room != null ? 'Room ' + order.booking.room.roomNumber : '-'}">Room</span>
+                </div>
+                <div class="text-small mb-2" th:text="${order.quantity} + 'x ' + ${order.foodItem}">Item</div>
+                <div class="flex justify-between"><span style="font-weight:600" th:text="'₹' + ${order.amount}">₹0</span><span class="text-xs text-muted" th:text="${order.orderedAt}">-</span></div>
+              </div>
+              <div class="text-muted" th:if="${#lists.isEmpty(pendingOrders)}">No pending orders.</div>
+            </div>
+          </div>
+          <!-- Preparing -->
+          <div class="kanban-column" data-column="preparing">
+            <div class="kanban-header">
+              <h4><span class="badge badge-warning"><span class="dot"></span> Preparing</span></h4>
+              <span class="kanban-count" th:text="${#lists.size(preparingOrders)}">0</span>
+            </div>
+            <div class="kanban-cards">
+              <div class="kanban-card fade-up" th:each="order : ${preparingOrders}">
+                <div class="flex justify-between mb-2">
+                  <span style="font-family:var(--font-mono);font-weight:600;color:var(--gold)" th:text="'#ORD-' + ${order.id}">#ORD-0</span>
+                  <span class="text-xs text-muted" th:text="${order.booking != null && order.booking.room != null ? 'Room ' + order.booking.room.roomNumber : '-'}">Room</span>
+                </div>
+                <div class="text-small mb-2" th:text="${order.quantity} + 'x ' + ${order.foodItem}">Item</div>
+                <div class="flex justify-between"><span style="font-weight:600" th:text="'₹' + ${order.amount}">₹0</span><span class="text-xs text-muted" th:text="${order.orderedAt}">-</span></div>
+              </div>
+              <div class="text-muted" th:if="${#lists.isEmpty(preparingOrders)}">No orders in preparation.</div>
+            </div>
+          </div>
+          <!-- Completed -->
+          <div class="kanban-column" data-column="completed">
+            <div class="kanban-header">
+              <h4><span class="badge badge-success"><span class="dot"></span> Completed</span></h4>
+              <span class="kanban-count" th:text="${#lists.size(completedOrders)}">0</span>
+            </div>
+            <div class="kanban-cards">
+              <div class="kanban-card fade-up" th:each="order : ${completedOrders}">
+                <div class="flex justify-between mb-2">
+                  <span style="font-family:var(--font-mono);font-weight:600;color:var(--gold)" th:text="'#ORD-' + ${order.id}">#ORD-0</span>
+                  <span class="text-xs text-muted" th:text="${order.booking != null && order.booking.room != null ? 'Room ' + order.booking.room.roomNumber : '-'}">Room</span>
+                </div>
+                <div class="text-small mb-2" th:text="${order.quantity} + 'x ' + ${order.foodItem}">Item</div>
+                <div class="flex justify-between"><span style="font-weight:600" th:text="'₹' + ${order.amount}">₹0</span><span class="text-xs text-muted">Delivered</span></div>
+              </div>
+              <div class="text-muted" th:if="${#lists.isEmpty(completedOrders)}">No completed orders.</div>
+            </div>
+          </div>
+        </div>
+        <div class="card mt-4">
+          <div class="section-title">Menu Items</div>
+          <div class="table-wrapper">
+            <table>
+              <thead><tr><th>Name</th><th>Category</th><th>Price</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr th:each="item : ${menuItems}">
+                  <td th:text="${item.name}">Item</td>
+                  <td th:text="${item.category}">Category</td>
+                  <td th:text="'₹' + ${item.price}">₹0</td>
+                  <td th:text="${item.available} ? 'Available' : 'Hidden'">Available</td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(menuItems)}"><td colspan="4" class="text-muted">No menu items yet.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <nav class="bottom-nav"><div class="bottom-nav-inner"><a th:href="@{/dashboard}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Home</a><a th:href="@{/rooms}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7v11a2 2 0 002 2h14a2 2 0 002-2V7"/></svg>Rooms</a><a th:href="@{/bookings}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/></svg>Bookings</a><a th:href="@{/restaurant}" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 010 8h-1"/></svg>Orders</a><a th:href="@{/reports}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>Reports</a></div></nav>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/shared.js"></script>
+  <script>
+    async function submitOrder(payload) {
+      const res = await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) { const err = await res.text(); throw new Error('Unable to save order: ' + res.status + ' ' + err); }
+      window.location.reload();
+    }
+
+    async function submitMenu(payload) {
+      const res = await fetch('/api/menu-items', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) { const err = await res.text(); throw new Error('Unable to save menu item: ' + res.status + ' ' + err); }
+      window.location.reload();
+    }
+
+    document.querySelectorAll('.kanban-tab').forEach(function(tab) {
+      tab.addEventListener('click', function() {
+        document.querySelectorAll('.kanban-tab').forEach(function(t) { t.classList.remove('active'); });
+        tab.classList.add('active');
+        var target = tab.getAttribute('data-tab');
+        document.querySelectorAll('.kanban-column').forEach(function(c) { c.classList.remove('active'); });
+        document.querySelector('.kanban-column[data-column="' + target + '"]').classList.add('active');
+      });
+    });
+
+    document.getElementById('quickCreateOrderBtn').addEventListener('click', async function() {
+      const payload = {
+        bookingId: document.getElementById('quickOrderBookingId').value || null,
+        foodItem: document.getElementById('quickOrderFoodItem').value,
+        foodCategory: document.getElementById('quickOrderCategory').value,
+        quantity: document.getElementById('quickOrderQty').value || 1,
+        amount: document.getElementById('quickOrderAmount').value || 0,
+        orderStatus: 'PENDING'
+      };
+      if (!payload.foodItem) return;
+      try { await submitOrder(payload); } catch (e) { alert(e.message); }
+    });
+
+    document.getElementById('quickCreateMenuBtn').addEventListener('click', async function() {
+      const payload = {
+        name: document.getElementById('quickMenuName').value,
+        category: document.getElementById('quickMenuCategory').value,
+        price: document.getElementById('quickMenuPrice').value || 0,
+        available: document.getElementById('quickMenuAvailable').value === 'true'
+      };
+      if (!payload.name) return;
+      try { await submitMenu(payload); } catch (e) { alert(e.message); }
+    });
+  </script>
+  <div class="modal-overlay" id="addOrderModal">
+    <div class="modal">
+      <div class="modal-header"><h3>New Order</h3><button class="modal-close">&times;</button></div>
+      <div class="modal-body">
+        <div class="form-group"><label class="form-label">Booking</label>
+          <select class="form-select" id="orderBookingId">
+            <option value="">Select booking</option>
+            <option th:each="b : ${bookings}" th:value="${b.id}" th:text="${b.room != null ? 'Room ' + b.room.roomNumber + ' - ' + b.customerName : b.customerName}">Booking</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Food Item</label><input type="text" id="orderFoodItem" class="form-input" placeholder="Item name" /></div>
+        <div class="form-group"><label class="form-label">Category</label><input type="text" id="orderCategory" class="form-input" placeholder="BREAKFAST / LUNCH / DINNER" /></div>
+        <div class="row g-3">
+          <div class="col-6"><div class="form-group"><label class="form-label">Qty</label><input type="number" id="orderQty" class="form-input" value="1" min="1" /></div></div>
+          <div class="col-6"><div class="form-group"><label class="form-label">Amount</label><input type="number" id="orderAmount" class="form-input" value="0" min="0" /></div></div>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="btn btn-ghost modal-close">Cancel</button><button class="btn btn-primary" id="createOrderBtn">Create Order</button></div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="addMenuModal">
+    <div class="modal">
+      <div class="modal-header"><h3>Add Menu Item</h3><button class="modal-close">&times;</button></div>
+      <div class="modal-body">
+        <div class="form-group"><label class="form-label">Name</label><input type="text" id="menuName" class="form-input" placeholder="Item name" /></div>
+        <div class="form-group"><label class="form-label">Category</label><input type="text" id="menuCategory" class="form-input" placeholder="BREAKFAST / LUNCH / DINNER" /></div>
+        <div class="form-group"><label class="form-label">Price</label><input type="number" id="menuPrice" class="form-input" value="0" min="0" /></div>
+        <div class="form-group"><label class="form-label">Available</label>
+          <select class="form-select" id="menuAvailable">
+            <option value="true">Available</option>
+            <option value="false">Hidden</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer"><button class="btn btn-ghost modal-close">Cancel</button><button class="btn btn-primary" id="createMenuBtn">Add Item</button></div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('createOrderBtn').addEventListener('click', async function() {
+      const payload = {
+        bookingId: document.getElementById('orderBookingId').value || null,
+        foodItem: document.getElementById('orderFoodItem').value,
+        foodCategory: document.getElementById('orderCategory').value,
+        quantity: document.getElementById('orderQty').value || 1,
+        amount: document.getElementById('orderAmount').value || 0,
+        orderStatus: 'PENDING'
+      };
+      try { await submitOrder(payload); } catch (e) { alert(e.message); }
+    });
+
+    document.getElementById('createMenuBtn').addEventListener('click', async function() {
+      const payload = {
+        name: document.getElementById('menuName').value,
+        category: document.getElementById('menuCategory').value,
+        price: document.getElementById('menuPrice').value || 0,
+        available: document.getElementById('menuAvailable').value === 'true'
+      };
+      try { await submitMenu(payload); } catch (e) { alert(e.message); }
+    });
+  </script>
+</body>
+</html>
+

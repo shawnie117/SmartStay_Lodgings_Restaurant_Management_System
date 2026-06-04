@@ -1,0 +1,156 @@
+﻿<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Guest Portal — SmartStay</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/shared.css" />
+  <style>
+    body { background: var(--bg-tertiary); }
+    .guest-header { text-align: center; padding: var(--space-xl) 0; position: relative; }
+    .guest-header .logo { width: 48px; height: 48px; background: linear-gradient(135deg, var(--gold), var(--gold-dark)); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; margin: 0 auto var(--space-md); font-weight: 700; font-size: 1.25rem; color: var(--bg); }
+    .guest-header .theme-toggle { position: absolute; top: var(--space-lg); right: 0; }
+    .booking-summary { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--space-lg); margin-bottom: var(--space-xl); }
+    .booking-summary .detail { display: flex; justify-content: space-between; padding: 6px 0; font-size: 0.875rem; }
+    .booking-summary .detail span:first-child { color: var(--fg-muted); }
+  </style>
+</head>
+<body>
+  <div class="guest-portal">
+    <div class="guest-header">
+      <button class="theme-toggle" aria-label="Toggle theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+      </button>
+      <div class="logo">S</div>
+      <h1 style="margin-bottom:4px">Welcome, <span th:text="${booking != null ? booking.customerName : 'Guest'}">Guest</span>!</h1>
+      <p class="room-number" th:text="${booking != null && booking.room != null ? 'Room ' + booking.room.roomNumber + ' · ' + booking.room.roomType : 'Room - · -'}">Room - · -</p>
+    </div>
+
+    <div class="booking-summary fade-up">
+      <h4 style="margin-bottom:var(--space-md);font-size:0.9375rem">Booking Summary</h4>
+      <div class="detail"><span>Check-In</span><span th:text="${booking != null ? booking.checkinDate : '-'}">-</span></div>
+      <div class="detail"><span>Check-Out</span><span th:text="${booking != null ? booking.checkoutDate : '-'}">-</span></div>
+      <div class="detail"><span>Guests</span><span>-</span></div>
+      <div class="detail"><span>Booking ID</span><span style="font-family:var(--font-mono);color:var(--gold)" th:text="${booking != null ? '#BK-' + booking.id : '-'}">-</span></div>
+    </div>
+
+    <div class="action-tiles">
+      <a th:href="@{/guest/{token}/order-food(token=${token})}" class="action-tile fade-up">
+        <div class="tile-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 010 8h-1M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/></svg></div>
+        <span class="tile-label">Order Food</span>
+      </a>
+      <a th:href="@{/guest/{token}/my-bill(token=${token})}" class="action-tile fade-up" style="animation-delay:0.1s">
+        <div class="tile-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/></svg></div>
+        <span class="tile-label">My Bill</span>
+      </a>
+      <a th:href="@{/guest/{token}/my-stay(token=${token})}" class="action-tile fade-up" style="animation-delay:0.2s">
+        <div class="tile-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg></div>
+        <span class="tile-label">My Stay</span>
+      </a>
+      <a href="javascript:void(0)" class="action-tile fade-up" style="animation-delay:0.3s" onclick="document.querySelector('.floating-ai-btn').click(); setTimeout(function(){ document.querySelector('.ai-quick-action[data-prompt=\'Request housekeeping\']').click(); }, 300);">
+        <div class="tile-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></div>
+        <span class="tile-label">Housekeeping</span>
+      </a>
+      <a th:href="@{/guest/{token}/feedback(token=${token})}" class="action-tile fade-up" style="animation-delay:0.4s">
+        <div class="tile-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+        <span class="tile-label">Feedback</span>
+      </a>
+    </div>
+
+    <div class="text-center text-muted text-small">
+      <p>Need help? Call reception at <strong style="color:var(--gold)">ext. 0</strong></p>
+    </div>
+  </div>
+
+  <!-- Floating AI Button -->
+  <button class="floating-ai-btn" data-ai-open aria-label="Ask AI" th:if="${chatEndpoint != null && !#strings.isEmpty(chatEndpoint)}">
+    <span class="pulse-ring"></span>
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8L12 2z"/></svg>
+  </button>
+
+  <!-- AI Assistant Overlay -->
+  <div class="ai-assistant-overlay" th:if="${chatEndpoint != null && !#strings.isEmpty(chatEndpoint)}">
+    <div class="ai-assistant-panel">
+      <div class="ai-assistant-header">
+        <div class="ai-title">
+          <span class="sparkle"><svg width="20" height="20" viewBox="0 0 24 24" fill="var(--gold)"><path d="M12 2l2.4 7.2L22 12l-7.6 2.8L12 22l-2.4-7.2L2 12l7.6-2.8L12 2z"/></svg></span>
+          <h3>SmartStay Assistant</h3>
+        </div>
+        <button class="ai-assistant-close" aria-label="Close">&times;</button>
+      </div>
+      <div class="ai-assistant-body">
+        <div class="chat-message ai">Welcome! I'm your SmartStay AI assistant. I can help you order food, check your bill, request housekeeping, or answer any questions about the hotel. What can I do for you?</div>
+      </div>
+      <div class="ai-quick-actions">
+        <button class="ai-quick-action" data-prompt="Order food">🍽️ Order Food</button>
+        <button class="ai-quick-action" data-prompt="Show my bill">📋 My Bill</button>
+        <button class="ai-quick-action" data-prompt="Request housekeeping">🧹 Housekeeping</button>
+        <button class="ai-quick-action" data-prompt="WiFi details">📶 WiFi</button>
+        <button class="ai-quick-action" data-prompt="Spa and gym hours">💆 Spa & Gym</button>
+      </div>
+      <div class="ai-assistant-input">
+        <input type="text" class="form-input ai-chat-input" placeholder="Ask me anything..." />
+        <button class="btn btn-primary ai-send-btn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/shared.js"></script>
+  <script th:inline="javascript" th:if="${chatEndpoint != null && !#strings.isEmpty(chatEndpoint)}">
+    const chatEndpoint = /*[[${chatEndpoint}]]*/ '';
+    const chatBody = document.querySelector('.ai-assistant-body');
+    const chatInput = document.querySelector('.ai-chat-input');
+    const chatSend = document.querySelector('.ai-send-btn');
+
+    async function sendGuestMessage(text) {
+      if (!chatEndpoint) return;
+      if (!text || !text.trim()) return;
+      const userMsg = document.createElement('div');
+      userMsg.className = 'chat-message user';
+      userMsg.textContent = text;
+      chatBody.appendChild(userMsg);
+      chatBody.scrollTop = chatBody.scrollHeight;
+      chatInput.value = '';
+
+      const loading = document.createElement('div');
+      loading.className = 'chat-message ai';
+      loading.textContent = '...';
+      chatBody.appendChild(loading);
+      chatBody.scrollTop = chatBody.scrollHeight;
+
+      try {
+        const res = await fetch(chatEndpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: text })
+        });
+        const data = await res.json();
+        loading.remove();
+        const aiMsg = document.createElement('div');
+        aiMsg.className = 'chat-message ai';
+        aiMsg.textContent = data.reply || 'No response received.';
+        chatBody.appendChild(aiMsg);
+        chatBody.scrollTop = chatBody.scrollHeight;
+      } catch (err) {
+        loading.remove();
+        const aiMsg = document.createElement('div');
+        aiMsg.className = 'chat-message ai';
+        aiMsg.textContent = 'Sorry, I could not reach the concierge service.';
+        chatBody.appendChild(aiMsg);
+        chatBody.scrollTop = chatBody.scrollHeight;
+      }
+    }
+
+    chatSend.addEventListener('click', function() { sendGuestMessage(chatInput.value); });
+    chatInput.addEventListener('keypress', function(e) { if (e.key === 'Enter') sendGuestMessage(chatInput.value); });
+
+    document.querySelectorAll('.ai-quick-action').forEach(function(btn) {
+      btn.addEventListener('click', function() { sendGuestMessage(btn.getAttribute('data-prompt')); });
+    });
+  </script>
+</body>
+</html>
